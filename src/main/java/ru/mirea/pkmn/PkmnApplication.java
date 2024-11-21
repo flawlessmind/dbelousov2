@@ -80,7 +80,7 @@ public class PkmnApplication {
             }
         };
 
-        client.getPokemonCard("azumarill", "h4", callback);
+        client.getPokemonCard("Mewtwo", "130", callback);
     }
 
     public static void testDatabase(PkmnRepository service) {
