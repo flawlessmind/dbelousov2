@@ -3,7 +3,7 @@ package ru.mirea.pkmn;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.mirea.pkmn.polupanpolina.entity.CardEntity;
+import ru.mirea.pkmn.belousovdo.entity.CardEntity;
 
 import java.io.Serializable;
 import java.util.List;
