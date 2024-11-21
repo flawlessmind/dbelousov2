@@ -1,0 +1,16 @@
+
+services:
+  web:
+    build: .
+    environment:
+      # External PostgreSQL database URL
+      - JPA_DATABASE_URL=jdbc:postgresql://services.tms-studio.ru:8095/pkmn_db_test
+      - JPA_DATABASE_USER=pkmn_user
+      - JPA_DATABASE_PASSWORD=pkmn_password
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./build/libs/pkmn.war:/usr/local/tomcat/webapps/ROOT.war
+
+volumes:
+  postgres_data:
