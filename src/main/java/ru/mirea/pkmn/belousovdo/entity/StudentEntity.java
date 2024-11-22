@@ -20,15 +20,15 @@ public class StudentEntity {
     @UuidGenerator
     private UUID id;
 
-    @Column(name = "firstName", nullable = false)
+    @Column(name = "firstName")
     private String firstName;
 
-    @Column(name = "patronicName", nullable = false)
+    @Column(name = "patronicName")
     private String surName;
 
-    @Column(name = "familyName", nullable = false)
+    @Column(name = "familyName")
     private String familyName;
 
-    @Column(nullable = false)
+    @Column
     private String group;
 }
