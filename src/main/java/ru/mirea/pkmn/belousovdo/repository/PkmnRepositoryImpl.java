@@ -41,6 +41,19 @@ public class PkmnRepositoryImpl implements PkmnRepository {
     }
 
     @Override
+    public CardEntity getCard(StudentEntity student) {
+        try {
+            return em.createQuery("SELECT c FROM CardEntity c WHERE c.pokemonOwner.id = :ownerId" , CardEntity.class)
+                    .setParameter("ownerId", student.getId())
+                    .getResultList()
+                    .get(0);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to find card with owner: " + student, e);
+        }
+        return null;
+    }
+
+    @Override
     public StudentEntity getStudent(String fullName) {
         String[] parts = fullName.split(" ");
         if (parts.length != 3) {
@@ -68,39 +81,47 @@ public class PkmnRepositoryImpl implements PkmnRepository {
 
     @Override
     public void saveCard(CardEntity card) {
-        EntityTransaction tx = em.getTransaction();
-        try {
-            Long count = (Long) em.createNativeQuery("SELECT COUNT(*) FROM card WHERE name = ?")
-                    .setParameter(1, card.getName())
-                    .getSingleResult();
 
-            if (count == 0) {
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+
+            if (!cardExists(card.getName())) {
                 tx.begin();
-                em.persist(card);
+                em.merge(card);
                 tx.commit();
                 logger.log(Level.INFO, "Card saved: " + card);
-
-            } else {
-                logger.log(Level.INFO, "Card is already in the database: " + card.getName());
             }
 
         } catch (Exception e) {
             tx.rollback();
             logger.log(Level.SEVERE, "Failed to save card: " + e.getMessage(), e);
         }
+
+       if (card.getEvolvesFrom() != null) saveCard(card.getEvolvesFrom());
     }
 
     @Override
     public void saveStudent(StudentEntity student) {
+
         EntityTransaction tx = em.getTransaction();
+
         try {
             tx.begin();
-            em.persist(student);
+            em.merge(student);
             tx.commit();
             logger.log(Level.INFO, "Student saved: " + student.getFirstName());
+
         } catch (Exception e) {
             tx.rollback();
             logger.log(Level.SEVERE, "Failed to save student: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public boolean cardExists(String cardName) {
+        return em.createQuery("SELECT COUNT(c) > 0 FROM CardEntity c WHERE c.name = :name", Boolean.class)
+                .setParameter("name", cardName)
+                .getSingleResult();
     }
 }
